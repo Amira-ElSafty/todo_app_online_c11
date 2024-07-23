@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app_todo_online_c11/firebase_utils.dart';
+import 'package:flutter_app_todo_online_c11/model/task.dart';
 
 class AddTaskBottomSheet extends StatefulWidget {
   @override
@@ -8,6 +10,8 @@ class AddTaskBottomSheet extends StatefulWidget {
 class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
   var formKey = GlobalKey<FormState>();
   var selectedDate = DateTime.now();
+  String title = '';
+  String description = '';
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +39,9 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
 
                       /// valid
                     },
+                    onChanged: (text) {
+                      title = text;
+                    },
                     decoration: InputDecoration(
                       hintText: 'Enter Task Title',
                     ),
@@ -46,6 +53,9 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                     decoration: InputDecoration(
                       hintText: 'Enter Task Description',
                     ),
+                    onChanged: (text) {
+                      description = text;
+                    },
                     validator: (text) {
                       if (text == null || text.isEmpty) {
                         return 'Please enter task Description';
@@ -96,6 +106,16 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
   void addTask() {
     if (formKey.currentState?.validate() == true) {
       /// add task
+      Task task = Task(
+        title: title,
+        description: description,
+        dateTime: selectedDate,
+      );
+      FirebaseUtils.addTaskToFireStore(task).timeout(Duration(seconds: 1),
+          onTimeout: () {
+        print('task added successfully');
+        Navigator.pop(context);
+      });
     }
   }
 

@@ -8,6 +8,7 @@ class TaskListTab extends StatelessWidget {
     return Column(
       children: [
         EasyDateTimeLine(
+          locale: 'en',
           initialDate: DateTime.now(),
           onDateChange: (selectedDate) {
             //`selectedDate` the new date selected.
