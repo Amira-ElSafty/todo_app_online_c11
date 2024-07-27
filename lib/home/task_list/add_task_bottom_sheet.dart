@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_todo_online_c11/firebase_utils.dart';
 import 'package:flutter_app_todo_online_c11/model/task.dart';
+import 'package:flutter_app_todo_online_c11/provider/list_provider.dart';
+import 'package:provider/provider.dart';
 
 class AddTaskBottomSheet extends StatefulWidget {
   @override
@@ -12,9 +14,11 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
   var selectedDate = DateTime.now();
   String title = '';
   String description = '';
+  late ListProvider listProvider;
 
   @override
   Widget build(BuildContext context) {
+    listProvider = Provider.of<ListProvider>(context);
     return Container(
       margin: EdgeInsets.all(12),
       child: Column(
@@ -82,7 +86,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                       },
                       child: Text(
                         '${selectedDate.day}/${selectedDate.month}/'
-                        '${selectedDate.year}',
+                            '${selectedDate.year}',
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
@@ -113,7 +117,8 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
       );
       FirebaseUtils.addTaskToFireStore(task).timeout(Duration(seconds: 1),
           onTimeout: () {
-        print('task added successfully');
+            print('task added successfully');
+        listProvider.getAllTasksFromFireStore();
         Navigator.pop(context);
       });
     }

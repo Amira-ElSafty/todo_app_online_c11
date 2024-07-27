@@ -5,6 +5,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_todo_online_c11/home/home_screen.dart';
 import 'package:flutter_app_todo_online_c11/my_theme_data.dart';
+import 'package:flutter_app_todo_online_c11/provider/list_provider.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,7 +19,8 @@ void main() async {
               projectId: 'todo-app-online-c11'))
       : await Firebase.initializeApp();
   await FirebaseFirestore.instance.disableNetwork();
-  runApp(MyApp());
+  runApp(ChangeNotifierProvider(
+      create: (context) => ListProvider(), child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {

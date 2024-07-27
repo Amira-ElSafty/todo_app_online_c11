@@ -1,17 +1,28 @@
 import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_todo_online_c11/home/task_list/task_list_item.dart';
+import 'package:flutter_app_todo_online_c11/provider/list_provider.dart';
+import 'package:provider/provider.dart';
 
-class TaskListTab extends StatelessWidget {
+class TaskListTab extends StatefulWidget {
+  @override
+  State<TaskListTab> createState() => _TaskListTabState();
+}
+
+class _TaskListTabState extends State<TaskListTab> {
   @override
   Widget build(BuildContext context) {
+    var listProvider = Provider.of<ListProvider>(context);
+    if (listProvider.tasksList.isEmpty) {
+      listProvider.getAllTasksFromFireStore();
+    }
     return Column(
       children: [
         EasyDateTimeLine(
           locale: 'en',
-          initialDate: DateTime.now(),
+          initialDate: listProvider.selectDate,
           onDateChange: (selectedDate) {
-            //`selectedDate` the new date selected.
+            listProvider.changeSelectDate(selectedDate);
           },
           headerProps: const EasyHeaderProps(
             monthPickerType: MonthPickerType.switcher,
@@ -37,9 +48,11 @@ class TaskListTab extends StatelessWidget {
         Expanded(
           child: ListView.builder(
             itemBuilder: (context, index) {
-              return TaskListItem();
+              return TaskListItem(
+                task: listProvider.tasksList[index],
+              );
             },
-            itemCount: 30,
+            itemCount: listProvider.tasksList.length,
           ),
         )
       ],
