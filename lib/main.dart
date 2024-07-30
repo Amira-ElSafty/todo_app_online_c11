@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app_todo_online_c11/auth/login/login_screen.dart';
+import 'package:flutter_app_todo_online_c11/auth/register/register_screen.dart';
 import 'package:flutter_app_todo_online_c11/home/home_screen.dart';
 import 'package:flutter_app_todo_online_c11/my_theme_data.dart';
 import 'package:flutter_app_todo_online_c11/provider/list_provider.dart';
@@ -30,9 +32,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: HomeScreen.routeName,
+      initialRoute: LoginScreen.routeName,
       routes: {
         HomeScreen.routeName: (context) => HomeScreen(),
+        RegisterScreen.routeName: (context) => RegisterScreen(),
+        LoginScreen.routeName: (context) => LoginScreen(),
       },
       theme: MyThemeData.lightTheme,
     );
