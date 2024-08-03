@@ -4,7 +4,11 @@ import 'package:flutter_app_todo_online_c11/app_colors.dart';
 import 'package:flutter_app_todo_online_c11/auth/custom_text_form_field.dart';
 import 'package:flutter_app_todo_online_c11/auth/register/register_screen.dart';
 import 'package:flutter_app_todo_online_c11/dialog_utils.dart';
+import 'package:flutter_app_todo_online_c11/firebase_utils.dart';
 import 'package:flutter_app_todo_online_c11/home/home_screen.dart';
+import 'package:provider/provider.dart';
+
+import '../../provider/auth_user_provider.dart';
 
 class LoginScreen extends StatefulWidget {
   static const String routeName = 'login_screen';
@@ -121,12 +125,20 @@ class _LoginScreenState extends State<LoginScreen> {
         final credential = await FirebaseAuth.instance
             .signInWithEmailAndPassword(
                 email: emailController.text, password: passwordController.text);
+        var user = await FirebaseUtils.readUserFromFireStore(
+            credential.user?.uid ?? '');
+        if (user == null) {
+          return;
+        }
+        var authProvider =
+            Provider.of<AuthUserProvider>(context, listen: false);
+        authProvider.updateUser(user);
         DialogUtils.hideLoading(context);
         DialogUtils.showMessage(
           context: context,
           posActionName: 'Ok',
           posAction: () {
-            Navigator.of(context).pushNamed(HomeScreen.routeName);
+            Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
           },
           message: 'Login Successfully.',
           title: 'Success',

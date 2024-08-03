@@ -3,7 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app_todo_online_c11/app_colors.dart';
 import 'package:flutter_app_todo_online_c11/auth/custom_text_form_field.dart';
 import 'package:flutter_app_todo_online_c11/dialog_utils.dart';
+import 'package:flutter_app_todo_online_c11/firebase_utils.dart';
 import 'package:flutter_app_todo_online_c11/home/home_screen.dart';
+import 'package:flutter_app_todo_online_c11/model/my_user.dart';
+import 'package:flutter_app_todo_online_c11/provider/auth_user_provider.dart';
+import 'package:provider/provider.dart';
 
 class RegisterScreen extends StatefulWidget {
   static const String routeName = 'register_screen';
@@ -140,6 +144,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
           email: emailController.text,
           password: passwordController.text,
         );
+        MyUser myUser = MyUser(
+            id: credential.user?.uid ?? '',
+            name: nameController.text,
+            email: emailController.text);
+        var authProvider =
+            Provider.of<AuthUserProvider>(context, listen: false);
+        authProvider.updateUser(myUser);
+        await FirebaseUtils.addUserToFireStore(myUser);
         //todo: hide loading
         DialogUtils.hideLoading(context);
         //todo: show Message
@@ -149,7 +161,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             title: 'Success',
             posActionName: 'Ok',
             posAction: () {
-              Navigator.of(context).pushNamed(HomeScreen.routeName);
+              Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
             });
         print(credential.user?.uid ?? "");
       } on FirebaseAuthException catch (e) {

@@ -6,6 +6,8 @@ import 'package:flutter_app_todo_online_c11/provider/list_provider.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 
+import '../../provider/auth_user_provider.dart';
+
 class TaskListItem extends StatelessWidget {
   Task task;
 
@@ -16,6 +18,8 @@ class TaskListItem extends StatelessWidget {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     var listProvider = Provider.of<ListProvider>(context);
+    var authProvider = Provider.of<AuthUserProvider>(context);
+
     return Container(
       margin: EdgeInsets.all(12),
       child: Slidable(
@@ -30,10 +34,16 @@ class TaskListItem extends StatelessWidget {
               borderRadius: BorderRadius.circular(15),
               onPressed: (context) {
                 /// delete task
-                FirebaseUtils.deleteTaskFromFireStore(task)
-                    .timeout(Duration(seconds: 1), onTimeout: () {
+                FirebaseUtils.deleteTaskFromFireStore(
+                        task, authProvider.currentUser!.id!)
+                    .then((value) {
                   print("task deleted successfully");
-                  listProvider.getAllTasksFromFireStore();
+                  listProvider
+                      .getAllTasksFromFireStore(authProvider.currentUser!.id!);
+                }).timeout(Duration(seconds: 1), onTimeout: () {
+                  print("task deleted successfully");
+                  listProvider
+                      .getAllTasksFromFireStore(authProvider.currentUser!.id!);
                 });
               },
               backgroundColor: AppColors.redColor,
